@@ -40,6 +40,51 @@ mongoose.connect(dbURI)
   })
   .catch(err => console.log(err));
 
+
+  // Routes
+app.get('/', (req, res) => {
+  res.redirect('/blogs');
+});
+
+app.get('/blogs', (req, res) => {
+  Note.find().sort({ createdAt: -1 })
+    .then(result => {
+      res.status(200).json({ notes: result, title: 'All notes' })
+    })
+    .catch(err => console.log(err));
+});
+
+app.post('/blogs', (req, res) => {
+  const note = new Note(req.body);
+
+  note.save()
+    .then(() => {
+      res.redirect('/blogs');
+    })
+    .catch(err => console.log(err));
+});
+
+app.get('/blogs/:id', (req, res) => {
+  const id = req.params.id;
+
+  Note.findById(id)
+    .then(result => {
+      res.render('details', { notes: result, title: 'Notes Details' });
+    })
+    .catch(err => console.log(err));
+});
+
+app.delete('/blogs/:id', (req, res) => {
+  const id = req.params.id;
+
+  Note.findByIdAndDelete(id)
+    .then(() => {
+      res.json({ redirect: '/blogs' });
+    })
+    .catch(err => console.log(err));
+});
+
+/*
 // Routes
 app.get('/', (req, res) => {
   res.redirect('/blogs');
@@ -96,3 +141,4 @@ app.delete('/blogs/:id', (req, res) => {
 app.use((req, res) => {
   res.status(404).render('404', { title: '404' });
 });
+*/
