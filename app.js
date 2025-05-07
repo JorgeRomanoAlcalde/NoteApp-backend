@@ -47,9 +47,18 @@ app.get('/', (req, res) => {
 });
 
 app.get('/blogs', (req, res) => {
+  const pinnedNotes = [];
+  const otherNotes = [];
+
   Note.find().sort({ createdAt: -1 })
     .then(result => {
-      res.status(200).json({ notes: result, title: 'All notes' })
+      if (note.pinned === true) {
+        pinnedNotes.push(note);
+      } else {
+        otherNotes.push(note);
+      }
+
+      res.status(200).json({ notes: result, title: 'All notes' });
     })
     .catch(err => console.log(err));
 });
@@ -69,7 +78,7 @@ app.get('/blogs/:id', (req, res) => {
 
   Note.findById(id)
     .then(result => {
-      res.render('details', { notes: result, title: 'Notes Details' });
+      res.render('details', { notes: result, title: 'Note Details' });
     })
     .catch(err => console.log(err));
 });
