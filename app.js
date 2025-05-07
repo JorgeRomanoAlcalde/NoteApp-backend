@@ -47,18 +47,19 @@ app.get('/', (req, res) => {
 });
 
 app.get('/blogs', (req, res) => {
-  const pinnedNotes = [];
-  const otherNotes = [];
+  const pinnedNotesArr = [];
+  const otherNotesArr = [];
 
   Note.find().sort({ createdAt: -1 })
     .then(result => {
-      if (note.pinned === true) {
-        pinnedNotes.push(note);
-      } else {
-        otherNotes.push(note);
-      }
-
-      res.status(200).json({ notes: result, title: 'All notes' });
+      result.forEach(note => {
+        if (note.pinned === true) {
+          pinnedNotesArr.push(note);
+        } else {
+          otherNotesArr.push(note);
+        }        
+      });
+      res.status(200).json({ pinnedNotes: pinnedNotesArr, otherNotes: otherNotesArr});
     })
     .catch(err => console.log(err));
 });
