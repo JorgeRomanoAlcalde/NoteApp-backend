@@ -70,7 +70,6 @@ app.get('/notes', (req, res) => {
           }
         }
       });
-
       res.json({ allNotes: allNotesArr, pinnedNotes: pinnedNotesArr, otherNotes: otherNotesArr, discardNotes: discardNotesArr, folders : folderArr});
     })
     .catch(err => console.log(err));
@@ -99,9 +98,23 @@ app.get('/folders', async (req, res) => {
 
 // Create note
 app.post('/createNote', (req, res) => {
-  const note = new Note(req.title, req.body, req.folder, req.color, req.pinned, req.discard);
+    const note = new Note({
+    title: req.body.title,
+    body: req.body.body
+  });
 
-  note.save().catch(err => console.log(err));
+   note.save()
+    .catch(err => console.log(err));
+});
+
+// Create folder
+app.post('/createFolder', (req, res) => {
+  const folder = new Folder({
+    folder: req.body.folder
+  });
+
+ folder.save().then(res.redirect('/notes'))
+  .catch(err => console.log(err));
 });
 
 // Discard note
