@@ -52,6 +52,8 @@ app.get('/notes', (req, res) => {
   const getFolders = Folder.find().sort({ createdAt: -1 }).exec();
   const getNotes = Note.find().sort({ createdAt: -1 }).exec();
 
+  console.log(getNotes);
+
   Promise.all([getFolders, getNotes])
     .then(([foldersResult, notesResult]) => {
       foldersResult.forEach(folder => {
@@ -168,8 +170,9 @@ app.patch('/note/:id/unPin', async (req,res) => {
 //Delete note completely
 app.delete('/note/:id/delete', (req, res) => {
   const noteId = req.params.id;
+  console.log('ID de la nota a eliminar (backend):', noteId);
 
-  Note.findByIdAndDelete(id)
+  Note.findByIdAndDelete(noteId)
     .then(() => {
       res.json({ redirect: '/notes' });
     })
