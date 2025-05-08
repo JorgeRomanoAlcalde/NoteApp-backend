@@ -170,7 +170,6 @@ app.patch('/note/:id/unPin', async (req,res) => {
 //Delete note completely
 app.delete('/note/:id/delete', (req, res) => {
   const noteId = req.params.id;
-  console.log('ID de la nota a eliminar (backend):', noteId);
 
   Note.findByIdAndDelete(noteId)
     .then(() => {
@@ -180,14 +179,17 @@ app.delete('/note/:id/delete', (req, res) => {
 });
 
 //Delete folder
-app.delete('/folder/:id/delete', (req, res) => {
-  const folderId = req.params.id;
+app.delete('/folder/:folderName/delete', (req, res) => {
+  const folderName = req.params.folderName;
 
-  Folder.findByIdAndDelete(folderId)
-    .then(() => {
-      res.json({ redirect: '/folders' });
+  Folder.findOneAndDelete({ folder: folderName })
+    .then(deletedFolder => {
+      if (deletedFolder) {
+        res.json({ message: `Carpeta "${folderName}" eliminada exitosamente` });
+      } else {
+        res.status(404).json({ message: `No se encontró ninguna carpeta con el nombre "${folderName}"` });
+      }
     })
-    .catch(err => console.log(err));
 });
 
 
