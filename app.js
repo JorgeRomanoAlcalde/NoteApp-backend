@@ -109,6 +109,34 @@ app.post('/createNote', (req, res) => {
     .catch(err => console.log(err));
 });
 
+// Edit note
+app.patch('/note/:id/edit', async (req,res) => {
+  const noteId = req.params.id;
+
+  const { title, body } = req.body;
+
+
+  try {
+    const updatedNote = await Note.findByIdAndUpdate(
+      noteId,
+      { title: title, body: body },
+      { new: true }
+    );
+
+    if (!updatedNote) {
+      console.warn(`Nota no encontrada para el ID: ${noteId}`);
+      return res.status(404).json({ message: 'Note not found.' });
+    }
+
+    console.log('Nota actualizada exitosamente:', updatedNote);
+    return res.status(200).json(updatedNote);
+
+  } catch (error) {
+    console.error('Error al actualizar la nota:', error);
+    return res.status(500).json({ message: 'Internal Server Error', error: error.message });
+  }
+});
+
 // Create folder
 app.post('/createFolder', (req, res) => {
   const folder = new Folder({
@@ -191,74 +219,3 @@ app.delete('/folder/:folderName/delete', (req, res) => {
       }
     })
 });
-
-
-
-app.get('/blogs/:id', (req, res) => {
-  const id = req.params.id;
-
-  Note.findById(id)
-    .then(result => {
-      res.render('details', { notes: result, title: 'Note Details' });
-    })
-    .catch(err => console.log(err));
-});
-
-/*
-// Routes
-app.get('/', (req, res) => {
-  res.redirect('/blogs');
-});
-
-app.get('/about', (req, res) => {
-  res.render('about', { title: 'About' });
-});
-
-app.get('/blogs/create', (req, res) => {
-  res.render('create', { title: 'Create a new blog' });
-});
-
-app.get('/blogs', (req, res) => {
-  Blog.find().sort({ createdAt: -1 })
-    .then(result => {
-      res.status(200).json({ blogs: result, title: 'All blogs' })
-      //res.render('index', { blogs: result, title: 'All blogs' });
-    })
-    .catch(err => console.log(err));
-});
-
-app.post('/blogs', (req, res) => {
-  const blog = new Blog(req.body);
-
-  blog.save()
-    .then(() => {
-      res.redirect('/blogs');
-    })
-    .catch(err => console.log(err));
-});
-
-app.get('/blogs/:id', (req, res) => {
-  const id = req.params.id;
-
-  Blog.findById(id)
-    .then(result => {
-      res.render('details', { blog: result, title: 'Blog Details' });
-    })
-    .catch(err => console.log(err));
-});
-
-app.delete('/blogs/:id', (req, res) => {
-  const id = req.params.id;
-
-  Blog.findByIdAndDelete(id)
-    .then(() => {
-      res.json({ redirect: '/blogs' });
-    })
-    .catch(err => console.log(err));
-});
-
-// 404 page
-app.use((req, res) => {
-  res.status(404).render('404', { title: '404' });
-});
-*/
