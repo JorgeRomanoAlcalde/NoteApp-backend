@@ -119,7 +119,7 @@ app.post('/createFolder', (req, res) => {
   .catch(err => console.log(err));
 });
 
-// Discard note
+//Discard note
 app.patch('/note/:id/discard', async (req,res) => {
   const noteId = req.params.id;
 
